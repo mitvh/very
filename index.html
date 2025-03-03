@@ -4,8 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Charles University Entrance Exam Registration</title>
-    <!-- PayPal SDK (sandbox mode) -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AeByKFwIdsbccMBpX045m9m-tVdQb4f9bJq6L3n8WfNuEy7cD_9ELMc1JzuZL9zaS1nNK2fGsLZ6uMBq-nf_Kyn0xcanhn81_cG3UND8zcLMNlkG3nf&components=buttons,funding-card"></script>
+    <script>
+        // Load PayPal SDK dynamically
+        let script = document.createElement("script");
+        script.src = "https://www.paypal.com/sdk/js?client-id=YOUR_LIVE_CLIENT_ID&currency=USD";
+        script.onload = function() {
+            console.log("PayPal SDK Loaded!");
+            loadPayPalButtons();
+        };
+        script.onerror = function() {
+            console.error("Failed to load PayPal SDK!");
+        };
+        document.head.appendChild(script);
+    </script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -88,39 +99,42 @@
         <p class="success-message" id="successMessage">✅ Payment successful! Thank you for registering.</p>
         <p class="error-message" id="errorMessage">❌ Payment failed. Please try again.</p>
     </div>
-    
+
     <script>
-        // Handle registration form submission
         document.getElementById('registrationForm').addEventListener('submit', function(event) {
             event.preventDefault();
             alert('Registration submitted! Proceed with payment.');
         });
 
-        // PayPal button setup
-        paypal.Buttons({
-            fundingSource: paypal.FUNDING.CARD, // Enables credit/debit card payment
-            style: {
-                shape: 'rect',
-                color: 'blue',
-                layout: 'vertical',
-                label: 'pay'
-            },
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{ amount: { value: '250' } }] // Exam fee
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    // Show success message upon successful payment
-                    document.getElementById("successMessage").style.display = "block";
-                });
-            },
-            onError: function(err) {
-                // Show error message if payment fails
-                document.getElementById("errorMessage").style.display = "block";
+        function loadPayPalButtons() {
+            if (typeof paypal === "undefined") {
+                console.error("PayPal SDK failed to load!");
+                return;
             }
-        }).render('#paypal-button-container');
+
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '250.00'
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        alert("Transaction completed by " + details.payer.name.given_name);
+                        document.getElementById("successMessage").style.display = "block";
+                    });
+                },
+                onError: function(err) {
+                    console.error("Payment failed", err);
+                    alert("Payment failed. Please check your PayPal account or try again.");
+                    document.getElementById("errorMessage").style.display = "block";
+                }
+            }).render('#paypal-button-container');
+        }
     </script>
 </body>
 </html>
