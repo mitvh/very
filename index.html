@@ -10,7 +10,11 @@
         script.src = "https://www.paypal.com/sdk/js?client-id=AeByKFwIdsbccMBpX045m9m-tVdQb4f9bJq6L3n8WfNuEy7cD_9ELMc1JzuZL9zaS1nNK2fGsLZ6uMBq&currency=USD";
         script.onload = function() {
             console.log("PayPal SDK Loaded!");
-            loadPayPalButtons();
+            if (typeof paypal !== "undefined") {
+                loadPayPalButtons();
+            } else {
+                console.error("PayPal SDK failed to initialize.");
+            }
         };
         script.onerror = function() {
             console.error("Failed to load PayPal SDK!");
@@ -103,9 +107,23 @@
     <script>
         document.getElementById('registrationForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            alert('Registration submitted! Proceed with payment.');
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const passport = document.getElementById('passport').value;
+            
+            if (name && email && passport) {
+                localStorage.setItem("userDetails", JSON.stringify({ name, email, passport }));
+                alert('Registration submitted! Proceed with payment.');
+            } else {
+                alert('Please fill in all fields before proceeding.');
+            }
         });
-
+        
+        document.getElementById('passport').addEventListener('input', function() {
+            this.value = this.value.toUpperCase().trim();
+        });
+        
         function loadPayPalButtons() {
             if (typeof paypal === "undefined") {
                 console.error("PayPal SDK failed to load!");
@@ -124,6 +142,16 @@
                 },
                 onApprove: function(data, actions) {
                     return actions.order.capture().then(function(details) {
+                        const userDetails = JSON.parse(localStorage.getItem("userDetails")) || {};
+
+                        fetch('/submit-registration', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ...userDetails, transactionID: details.id })
+                        }).then(response => response.json())
+                          .then(data => console.log("Registration saved:", data))
+                          .catch(error => console.error("Error saving registration:", error));
+
                         alert("Transaction completed by " + details.payer.name.given_name);
                         document.getElementById("successMessage").style.display = "block";
                     });
