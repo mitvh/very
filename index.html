@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charles 3 faculty Entrance Exam Registration</title>
+    <title>Pilsen medical faculty Entrance Exam Registration</title>
     <script>
         let script = document.createElement("script");
-        script.src = "https://www.paypal.com/sdk/js?client-id=Afc2aIDTdNtjiEilgxXiZupn7YGmqiJlsP4Gbvi-Q1oKFi770POvMLfgI8JgXY1ujemTwpfeWeAp0B_O&currency=USD";
+        script.src = "https://www.paypal.com/sdk/js?client-id=AecKv1hIUMqncLLk-ZOJ2Nc0cCF7EuaAdJyRSxBLw0wDb_0e_anFKaHMCRw8zNhURCaZBbVrDw9oFzNt&currency=USD";
         script.onload = function() {
             console.log("PayPal SDK Loaded!");
             if (typeof paypal !== "undefined") {
@@ -71,7 +71,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>charles 3 faculty University Entrance Exam</h2>
+        <h2>Pilsen medical faculty University Entrance Exam</h2>
         <p>Register now for the entrance exam and secure your spot!</p>
         <form id="registrationForm">
             <label for="name">Full Name</label>
@@ -84,7 +84,7 @@
             <input type="text" id="passport" placeholder="Enter your passport number" required>
         </form>
         
-        <h3>Exam Fee: $130</h3>
+        <h3>Exam Fee: $110</h3>
         <p>Proceed with the payment to complete your registration.</p>
         <div class="paypal-container" id="paypal-button-container"></div>
         <p class="success-message" id="successMessage">✅ Payment successful! Thank you for registering.</p>
@@ -107,7 +107,7 @@
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
-                                value: '130.00'
+                                value: '110.00'
                             }
                         }]
                     });
